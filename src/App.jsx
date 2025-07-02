@@ -5,7 +5,7 @@ function App() {
   return (
     <>
       <main className="container my-3">
-        <h1 className="text-center">Hola Mundo</h1>
+        <h1 className="text-center">Consulta el clima de tu ciudad</h1>
         <Formulario/>
       </main>
       <footer className="bg-info text-light text-center py-3">

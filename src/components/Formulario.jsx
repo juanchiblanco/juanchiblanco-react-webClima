@@ -1,15 +1,22 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Clima from "./Clima";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
 const Formulario = () => {
   const [clima, setClima] = useState([]);
   const [ciudad, setCiudad] = useState("");
   const [pais, setPais] = useState("");
-  const [latitud, setLatitud] = useState("")
-  const [longitud, setLongitud] = useState("")
-  const [ubicacion, setUbicacion] = useState("")
+  const [latitud, setLatitud] = useState("");
+  const [longitud, setLongitud] = useState("");
+  const [ubicacion, setUbicacion] = useState("");
+
+  useEffect(() => {
+    if (latitud && longitud) {
+      obtenerClima();
+    }
+  }, [latitud, longitud]);
 
   const obtenerUbicacion = async (e) => {
     e.preventDefault();
@@ -19,27 +26,38 @@ const Formulario = () => {
       );
       if (respuesta.status === 200) {
         const datos = await respuesta.json();
-        setLatitud(datos[0].lat)
-        setLongitud(datos[0].lon)
-           setUbicacion(datos[0])
-        obtenerClima()
+        if (datos.length === 0) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "La ciudad no fue encontrada!",
+          });
+        }
+        setLatitud(datos[0].lat);
+        setLongitud(datos[0].lon);
+        setUbicacion(datos[0]);
       }
-    } catch (error) {}
+    } catch (error) {
+      Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "La API no funciona en este momento!",
+          });
+    }
   };
 
   const obtenerClima = async () => {
     try {
-        const respuestaClima = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitud}&lon=${longitud}&appid=13aa66a88f30ffd8edf17ce839c338c6&units=metric&lang=es`)
-        if(respuestaClima.status===200){
-           const datosClima = await respuestaClima.json()
-           setClima(datosClima)
-           console.log(datosClima)
-        }
-        
-    } catch (error) {
-        
-    }
-  }
+      const respuestaClima = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitud}&lon=${longitud}&appid=13aa66a88f30ffd8edf17ce839c338c6&units=metric&lang=es`
+      );
+      if (respuestaClima.status === 200) {
+        const datosClima = await respuestaClima.json();
+        setClima(datosClima);
+        console.log(datosClima);
+      }
+    } catch (error) {}
+  };
 
   return (
     <section className="container">
@@ -66,7 +84,7 @@ const Formulario = () => {
           </Button>
         </Form>
       </div>
-      <Clima clima={clima} ubicacion={ubicacion}/>
+      <Clima clima={clima} ubicacion={ubicacion} />
     </section>
   );
 };
