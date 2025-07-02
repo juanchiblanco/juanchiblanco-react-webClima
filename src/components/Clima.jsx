@@ -1,28 +1,40 @@
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 
-const Clima = ({clima, ubicacion}) => {
+const Clima = ({ clima, ubicacion }) => {
   return (
-    <article>
-      <Card className="h-100">
-        <Card.Header className="shadow bg-light text-dark h-100">
-          <p className="fs-5 text-uppercase text-start">{ubicacion.name}, {ubicacion.country}</p>
-          <p>{clima.name}</p>
-          <p>{clima.weather[0].description}</p>
-          <p className="lead text-center">{clima.main.temp}</p>
-          <div>
-            <p className="lead text-center">{clima.main.temp_min}</p>
-            <p className="lead text-center">{clima.main.temp_max}</p>
+    <article className="row justify-content-center">
+      <Card className="border-0 w-75">
+        <Card.Body className="shadow bg-light text-dark h-100 d-flex">
+          <div className="me-auto">
+            <p className="fs-5 text-uppercase text-start">
+              {ubicacion.name}, {ubicacion.country}
+            </p>
+            <p>{clima.name}</p>
+            <p>
+              {clima.weather && clima.weather.length > 0
+                ? clima.weather[0].description
+                : "Información no disponible"}
+            </p>
           </div>
-        </Card.Header>
-        <Card.Body className="text-center border-top border-bottom border-light subtle h-100">
-          <p className="text-truncate"></p>
+          <div>
+            <p className="text-center display-2">
+              {clima.weather && clima.weather.length > 0
+                ? `${clima.main.temp} °`
+                : "Información no disponible"}
+            </p>
+            <p className="text-center">
+              {clima.weather && clima.weather.length > 0
+                ?  `Min: ${clima.main.temp_min} °`
+                : "Información no disponible"}
+            </p>
+            <p className="text-center">
+              {clima.weather && clima.weather.length > 0
+                ? `Max: ${clima.main.temp_max} °`
+                : "Información no disponible"}
+            </p>
+          </div>
         </Card.Body>
-        <Card.Footer className="d-flex justify-content-center">
-          <a href="hola">
-            <Button>Ver noticia completa</Button>
-          </a>
-        </Card.Footer>
       </Card>
     </article>
   );
