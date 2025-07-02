@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Clima from "./Clima";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
+import { Spinner } from "react-bootstrap";
 
 const Formulario = () => {
   const [clima, setClima] = useState([]);
@@ -11,6 +12,7 @@ const Formulario = () => {
   const [latitud, setLatitud] = useState("");
   const [longitud, setLongitud] = useState("");
   const [ubicacion, setUbicacion] = useState("");
+  const [mostrarSpinner, setMostrarSpinner] = useState(true);
 
   useEffect(() => {
     if (latitud && longitud) {
@@ -39,15 +41,16 @@ const Formulario = () => {
       }
     } catch (error) {
       Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "La API no funciona en este momento!",
-          });
+        icon: "error",
+        title: "Oops...",
+        text: "La API no funciona en este momento!",
+      });
     }
   };
 
   const obtenerClima = async () => {
     try {
+      setMostrarSpinner(true);
       const respuestaClima = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${latitud}&lon=${longitud}&appid=13aa66a88f30ffd8edf17ce839c338c6&units=metric&lang=es`
       );
@@ -56,6 +59,7 @@ const Formulario = () => {
         setClima(datosClima);
         console.log(datosClima);
       }
+      setMostrarSpinner(false);
     } catch (error) {}
   };
 
@@ -84,7 +88,15 @@ const Formulario = () => {
           </Button>
         </Form>
       </div>
-      <Clima clima={clima} ubicacion={ubicacion} />
+      <div>
+        {mostrarSpinner === true ? (
+          <div className="my-4 text-center">
+            <Spinner variant="light" />
+          </div>
+        ) : (
+          <Clima clima={clima} ubicacion={ubicacion} />
+        )}
+      </div>
     </section>
   );
 };
