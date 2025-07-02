@@ -1,78 +1,74 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { useForm } from "react-hook-form";
 import Clima from "./Clima";
+import { useState } from "react";
 
 const Formulario = () => {
+  const [clima, setClima] = useState([]);
+  const [ciudad, setCiudad] = useState("");
+  const [pais, setPais] = useState("");
+  const [latitud, setLatitud] = useState("")
+  const [longitud, setLongitud] = useState("")
+  const [ubicacion, setUbicacion] = useState("")
 
-    const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+  const obtenerUbicacion = async (e) => {
+    e.preventDefault();
+    try {
+      const respuesta = await fetch(
+        `http://api.openweathermap.org/geo/1.0/direct?q=${ciudad},${pais}&limit=1&appid=13aa66a88f30ffd8edf17ce839c338c6&lang=es`
+      );
+      if (respuesta.status === 200) {
+        const datos = await respuesta.json();
+        setLatitud(datos[0].lat)
+        setLongitud(datos[0].lon)
+           setUbicacion(datos[0])
+        obtenerClima()
+      }
+    } catch (error) {}
+  };
 
-    return (
-        <section className="container">
-            <div>
-                <Form onSubmit={handleSubmit} className="mb-4">
-        <Form.Group className="mb-3 row justify-content-center gap-2">
-          <Form.Control
-            type="text"
-            placeholder="Ingresa una ciudad"
-            {...register("inputCiudad", {
-              required: "La ciudad es un dato obligatorio",
-              minLength: {
-                value: 3,
-                message: "La ciudad debe tener 3 caracteres como minimo",
-              },
-              maxLength: {
-                value: 50,
-                message: "La ciudad debe tener 50 caracteres como minimo",
-              },
-              pattern: {
-                value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{1,50}$/,
-                message:
-                  "La ciudad debe contener caracteres alfa, mayusculas o minusculas",
-              },
-            })} className="col-12 col-md-6"
-          />
-          <Form.Text className="text-danger">
-          {errors.inputCiudad?.message}
-        </Form.Text>
-          <Form.Control
-            type="text"
-            placeholder="Ingresa un pais"
-            {...register("inputPais", {
-              required: "El pais es un dato obligatorio",
-              minLength: {
-                value: 3,
-                message: "El pais debe tener 3 caracteres como minimo",
-              },
-              maxLength: {
-                value: 50,
-                message: "El pais debe tener 50 caracteres como minimo",
-              },
-              pattern: {
-                value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{1,50}$/,
-                message:
-                  "El pais debe contener caracteres alfa, mayusculas o minusculas",
-              },
-            })} className="col-12 col-md-6"
-          />
-          
-        <Form.Text className="text-danger">
-          {errors.inputPais?.message}
-        </Form.Text>
-        </Form.Group>
-        <Button variant="success" type="submit">
+  const obtenerClima = async () => {
+    try {
+        const respuestaClima = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitud}&lon=${longitud}&appid=13aa66a88f30ffd8edf17ce839c338c6&units=metric&lang=es`)
+        if(respuestaClima.status===200){
+           const datosClima = await respuestaClima.json()
+           setClima(datosClima)
+           console.log(datosClima)
+        }
+        
+    } catch (error) {
+        
+    }
+  }
+
+  return (
+    <section className="container">
+      <div>
+        <Form onSubmit={obtenerUbicacion} className="mb-4">
+          <Form.Group className="mb-3 row justify-content-center gap-2">
+            <Form.Control
+              type="text"
+              placeholder="Ingresa una ciudad"
+              className="col-12 col-md-6"
+              onChange={(e) => setCiudad(e.target.value)}
+              value={ciudad}
+            />
+            <Form.Control
+              type="text"
+              placeholder="Ingresa un pais"
+              className="col-12 col-md-6"
+              onChange={(e) => setPais(e.target.value)}
+              value={pais}
+            />
+          </Form.Group>
+          <Button variant="success" type="submit">
             Consultar clima
           </Button>
-      </Form>
-            </div>
-        <Clima/>
-        </section>
-    );
+        </Form>
+      </div>
+      <Clima clima={clima} ubicacion={ubicacion}/>
+    </section>
+  );
 };
 
 export default Formulario;
