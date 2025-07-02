@@ -1,6 +1,7 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useForm } from "react-hook-form";
+import Clima from "./Clima";
 
 const Formulario = () => {
 
@@ -69,6 +70,7 @@ const Formulario = () => {
           </Button>
       </Form>
             </div>
+        <Clima/>
         </section>
     );
 };
