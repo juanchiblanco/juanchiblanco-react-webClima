@@ -24,7 +24,7 @@ const Formulario = () => {
     e.preventDefault();
     try {
       const respuesta = await fetch(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${ciudad},${pais}&limit=1&appid=13aa66a88f30ffd8edf17ce839c338c6&lang=es`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${ciudad},${pais}&limit=1&appid=13aa66a88f30ffd8edf17ce839c338c6&lang=es`
       );
       if (respuesta.status === 200) {
         const datos = await respuesta.json();
